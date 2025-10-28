@@ -1,0 +1,52 @@
+<header class="bg-leather-brown text-white shadow-lg">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <nav class="flex justify-between items-center h-16">
+      <a routerLink="/" class="text-2xl font-semibold hover:text-leather-accent transition-colors">
+        Leather Accessories
+      </a>
+      <ul class="flex items-center space-x-6">
+        <li>
+          <a routerLink="/" routerLinkActive="text-leather-accent" [routerLinkActiveOptions]="{exact: true}"
+             class="hover:text-leather-accent transition-colors font-medium">
+            Shop
+          </a>
+        </li>
+        <li>
+          <a routerLink="/cart" routerLinkActive="text-leather-accent"
+             class="relative hover:text-leather-accent transition-colors font-medium">
+            Cart
+            <span *ngIf="(cartItemCount$ | async) as count"
+                  class="absolute -top-2 -right-3 bg-leather-accent text-leather-brown text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+              {{ count }}
+            </span>
+          </a>
+        </li>
+        <ng-container *ngIf="currentUser$ | async as user; else notLoggedIn">
+          <li class="text-gray-300">
+            {{ user.full_name || user.email }}
+          </li>
+          <li>
+            <button (click)="logout()"
+                    class="px-4 py-2 bg-leather-accent text-leather-brown rounded-lg hover:bg-opacity-90 transition-all font-medium">
+              Logout
+            </button>
+          </li>
+        </ng-container>
+        <ng-template #notLoggedIn>
+          <li>
+            <a routerLink="/login"
+               class="px-4 py-2 border border-white rounded-lg hover:bg-white hover:text-leather-brown transition-all font-medium">
+              Login
+            </a>
+          </li>
+          <li>
+            <a routerLink="/register"
+               class="px-4 py-2 bg-leather-accent text-leather-brown rounded-lg hover:bg-opacity-90 transition-all font-medium">
+              Sign Up
+            </a>
+          </li>
+        </ng-template>
+      </ul>
+    </nav>
+  </div>
+</header>

@@ -1,0 +1,55 @@
+<div class="product-detail-container">
+  <div class="container">
+    <a routerLink="/" class="back-link">&larr; Back to Shop</a>
+
+    <div *ngIf="loading" class="loading">
+      Loading product...
+    </div>
+
+    <div *ngIf="error" class="error">
+      {{ error }}
+    </div>
+
+    <div *ngIf="product && !loading && !error" class="product-detail">
+      <div class="product-image">
+        <img [src]="product.image_url || getDefaultImage()" [alt]="product.name">
+      </div>
+
+      <div class="product-info">
+        <h1>{{ product.name }}</h1>
+        <p class="product-sku">SKU: {{ product.sku }}</p>
+        <p class="product-price">${{ product.price.toFixed(2) }}</p>
+
+        <div class="product-description" *ngIf="product.description">
+          <h3>Description</h3>
+          <p>{{ product.description }}</p>
+        </div>
+
+        <div class="stock-info">
+          <p *ngIf="product.stock_quantity > 0" class="in-stock">
+            {{ product.stock_quantity }} in stock
+          </p>
+          <p *ngIf="product.stock_quantity === 0" class="out-of-stock">
+            Out of stock
+          </p>
+        </div>
+
+        <div class="quantity-selector" *ngIf="product.stock_quantity > 0">
+          <label>Quantity:</label>
+          <div class="quantity-controls">
+            <button (click)="decreaseQuantity()" [disabled]="quantity <= 1">-</button>
+            <span class="quantity">{{ quantity }}</span>
+            <button (click)="increaseQuantity()" [disabled]="quantity >= product.stock_quantity">+</button>
+          </div>
+        </div>
+
+        <button
+          class="add-to-cart-btn"
+          (click)="addToCart()"
+          [disabled]="product.stock_quantity === 0">
+          {{ product.stock_quantity > 0 ? 'Add to Cart' : 'Out of Stock' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

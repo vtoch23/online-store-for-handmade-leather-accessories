@@ -1,0 +1,66 @@
+<div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-md w-full space-y-8">
+    <div>
+      <h2 class="mt-6 text-center text-3xl font-extrabold text-leather-brown">
+        Sign in to your account
+      </h2>
+      <p class="mt-2 text-center text-sm text-gray-600">
+        Or
+        <a routerLink="/register" class="font-medium text-leather-accent hover:text-opacity-80">
+          create a new account
+        </a>
+      </p>
+    </div>
+
+    <div *ngIf="error" class="bg-red-50 border border-red-200 text-red-800 rounded-lg p-4">
+      {{ error }}
+    </div>
+
+    <form class="mt-8 space-y-6" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <div class="rounded-md shadow-sm space-y-4">
+        <div>
+          <label for="email" class="block text-sm font-medium text-gray-700 mb-1">
+            Email address
+          </label>
+          <input
+            id="email"
+            type="email"
+            formControlName="email"
+            class="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-leather-accent focus:border-leather-accent focus:z-10 sm:text-sm"
+            [class.border-red-500]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
+            placeholder="Email address">
+          <p *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
+             class="mt-1 text-sm text-red-600">
+            Please enter a valid email address
+          </p>
+        </div>
+
+        <div>
+          <label for="password" class="block text-sm font-medium text-gray-700 mb-1">
+            Password
+          </label>
+          <input
+            id="password"
+            type="password"
+            formControlName="password"
+            class="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-leather-accent focus:border-leather-accent focus:z-10 sm:text-sm"
+            [class.border-red-500]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
+            placeholder="Password">
+          <p *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
+             class="mt-1 text-sm text-red-600">
+            Password is required
+          </p>
+        </div>
+      </div>
+
+      <div>
+        <button
+          type="submit"
+          [disabled]="loginForm.invalid || loading"
+          class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-leather-brown hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-leather-accent disabled:opacity-50 disabled:cursor-not-allowed transition-all">
+          {{ loading ? 'Signing in...' : 'Sign in' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
