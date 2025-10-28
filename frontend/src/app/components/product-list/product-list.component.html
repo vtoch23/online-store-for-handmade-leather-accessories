@@ -1,0 +1,60 @@
+<div class="product-list-container">
+  <div class="container">
+    <div class="filters">
+      <h2>Categories</h2>
+      <button
+        class="filter-btn"
+        [class.active]="!selectedCategory"
+        (click)="filterByCategory()">
+        All Products
+      </button>
+      <button
+        *ngFor="let category of categories"
+        class="filter-btn"
+        [class.active]="selectedCategory === category.id"
+        (click)="filterByCategory(category.id)">
+        {{ category.name }}
+      </button>
+    </div>
+
+    <div class="products-section">
+      <h1>Our Handmade Leather Accessories</h1>
+
+      <div *ngIf="loading" class="loading">
+        Loading products...
+      </div>
+
+      <div *ngIf="error" class="error">
+        {{ error }}
+      </div>
+
+      <div class="products-grid" *ngIf="!loading && !error">
+        <div *ngFor="let product of products" class="product-card" [routerLink]="['/product', product.id]">
+          <div class="product-image">
+            <img [src]="product.image_url || getDefaultImage()" [alt]="product.name">
+          </div>
+          <div class="product-info">
+            <h3>{{ product.name }}</h3>
+            <p class="product-price">${{ product.price.toFixed(2) }}</p>
+            <p class="product-stock" *ngIf="product.stock_quantity > 0">
+              {{ product.stock_quantity }} in stock
+            </p>
+            <p class="product-stock out-of-stock" *ngIf="product.stock_quantity === 0">
+              Out of stock
+            </p>
+            <button
+              class="add-to-cart-btn"
+              (click)="addToCart(product, $event)"
+              [disabled]="product.stock_quantity === 0">
+              Add to Cart
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="!loading && !error && products.length === 0" class="no-products">
+        No products available in this category.
+      </div>
+    </div>
+  </div>
+</div>
