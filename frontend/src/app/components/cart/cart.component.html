@@ -2,14 +2,18 @@
   <div class="container">
     <h1>Shopping Cart</h1>
 
-    <div *ngIf="cartItems.length === 0" class="empty-cart">
-      <p>Your cart is empty</p>
-      <a routerLink="/" class="continue-shopping-btn">Continue Shopping</a>
-    </div>
+    @if (cartItems.length === 0) {
+      <div class="empty-cart">
+        <p>Your cart is empty</p>
+        <a routerLink="/" class="continue-shopping-btn">Continue Shopping</a>
+      </div>
+    }
 
-    <div *ngIf="cartItems.length > 0" class="cart-content">
-      <div class="cart-items">
-        <div *ngFor="let item of cartItems" class="cart-item">
+    @if (cartItems.length > 0) {
+      <div class="cart-content">
+        <div class="cart-items">
+          @for (item of cartItems; track item.product.id) {
+            <div class="cart-item">
           <div class="item-image">
             <img [src]="item.product.image_url || getDefaultImage()" [alt]="item.product.name">
           </div>
@@ -36,10 +40,11 @@
           <button class="remove-btn" (click)="removeItem(item.product.id)" title="Remove item">
             &times;
           </button>
+            </div>
+          }
         </div>
-      </div>
 
-      <div class="cart-summary">
+        <div class="cart-summary">
         <h2>Order Summary</h2>
         <div class="summary-row">
           <span>Subtotal:</span>
@@ -51,7 +56,8 @@
         </div>
         <a routerLink="/checkout" class="checkout-btn">Proceed to Checkout</a>
         <a routerLink="/" class="continue-shopping-link">Continue Shopping</a>
+        </div>
       </div>
-    </div>
+    }
   </div>
 </div>

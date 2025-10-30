@@ -7,14 +7,17 @@
     </div>
 
     <!-- Loading State -->
-    <div *ngIf="loading" class="flex justify-center items-center py-12">
-      <div class="w-12 h-12 border-4 border-leather-primary border-t-transparent rounded-full animate-spin"></div>
-    </div>
+    @if (loading) {
+      <div class="flex justify-center items-center py-12">
+        <div class="w-12 h-12 border-4 border-leather-primary border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    }
 
     <!-- Orders List -->
-    <div *ngIf="!loading && orders.length > 0" class="space-y-4">
-      <div *ngFor="let order of orders"
-           class="bg-white rounded-lg shadow hover:shadow-lg transition-shadow">
+    @if (!loading && orders.length > 0) {
+      <div class="space-y-4">
+        @for (order of orders; track order.id) {
+          <div class="bg-white rounded-lg shadow hover:shadow-lg transition-shadow">
         <div class="p-6">
           <!-- Order Header -->
           <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4">
@@ -50,12 +53,15 @@
               </button>
             </div>
           </div>
+          </div>
         </div>
+        }
       </div>
-    </div>
+    }
 
     <!-- Empty State -->
-    <div *ngIf="!loading && orders.length === 0" class="bg-white rounded-lg shadow p-12 text-center">
+    @if (!loading && orders.length === 0) {
+      <div class="bg-white rounded-lg shadow p-12 text-center">
       <svg class="w-24 h-24 mx-auto text-stone-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
       </svg>
@@ -67,14 +73,15 @@
       >
         Browse Products
       </a>
-    </div>
+      </div>
+    }
   </div>
 </div>
 
 <!-- Order Details Modal -->
-<div *ngIf="selectedOrder"
-     class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
-     (click)="closeOrderDetails()">
+@if (selectedOrder) {
+  <div class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
+       (click)="closeOrderDetails()">
   <div class="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto"
        (click)="$event.stopPropagation()">
     <!-- Modal Header -->
@@ -113,21 +120,22 @@
       <div class="mb-6">
         <h3 class="font-semibold text-stone-900 mb-4">Items</h3>
         <div class="space-y-4">
-          <div *ngFor="let item of selectedOrder.items"
-               class="flex items-center space-x-4 pb-4 border-b border-stone-200 last:border-0">
-            <div class="w-20 h-20 bg-stone-200 rounded-lg flex items-center justify-center flex-shrink-0">
-              <svg class="w-8 h-8 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-              </svg>
+          @for (item of selectedOrder.items; track $index) {
+            <div class="flex items-center space-x-4 pb-4 border-b border-stone-200 last:border-0">
+              <div class="w-20 h-20 bg-stone-200 rounded-lg flex items-center justify-center flex-shrink-0">
+                <svg class="w-8 h-8 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                </svg>
+              </div>
+              <div class="flex-1">
+                <h4 class="font-medium text-stone-900">{{ item.product_name }}</h4>
+                <p class="text-sm text-stone-500">Quantity: {{ item.quantity }}</p>
+              </div>
+              <div class="text-right">
+                <p class="font-semibold text-stone-900">${{ item.price.toFixed(2) }}</p>
+              </div>
             </div>
-            <div class="flex-1">
-              <h4 class="font-medium text-stone-900">{{ item.product_name }}</h4>
-              <p class="text-sm text-stone-500">Quantity: {{ item.quantity }}</p>
-            </div>
-            <div class="text-right">
-              <p class="font-semibold text-stone-900">${{ item.price.toFixed(2) }}</p>
-            </div>
-          </div>
+          }
         </div>
       </div>
 
@@ -150,4 +158,5 @@
       </button>
     </div>
   </div>
-</div>
+  </div>
+}

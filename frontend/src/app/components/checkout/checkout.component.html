@@ -6,9 +6,11 @@
       <div class="checkout-form">
         <h2>Shipping Information</h2>
 
-        <div *ngIf="error" class="error-message">
-          {{ error }}
-        </div>
+        @if (error) {
+          <div class="error-message">
+            {{ error }}
+          </div>
+        }
 
         <form [formGroup]="checkoutForm" (ngSubmit)="onSubmit()">
           <div class="form-group">
@@ -80,13 +82,15 @@
         <h2>Order Summary</h2>
 
         <div class="summary-items">
-          <div *ngFor="let item of cartItems" class="summary-item">
-            <div class="item-info">
-              <p class="item-name">{{ item.product.name }}</p>
-              <p class="item-quantity">Qty: {{ item.quantity }}</p>
+          @for (item of cartItems; track item.product.id) {
+            <div class="summary-item">
+              <div class="item-info">
+                <p class="item-name">{{ item.product.name }}</p>
+                <p class="item-quantity">Qty: {{ item.quantity }}</p>
+              </div>
+              <p class="item-price">${{ (item.product.price * item.quantity).toFixed(2) }}</p>
             </div>
-            <p class="item-price">${{ (item.product.price * item.quantity).toFixed(2) }}</p>
-          </div>
+          }
         </div>
 
         <div class="summary-total">
