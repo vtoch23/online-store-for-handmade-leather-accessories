@@ -82,4 +82,10 @@ export class AuthService {
   getCurrentUser(): UserProfile | null {
     return this.currentUserSubject.value;
   }
+
+  verifyEmail(token: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.apiUrl}/auth/verify-email`, null, {
+      params: { token }
+    });
+  }
 }

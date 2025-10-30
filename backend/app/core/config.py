@@ -21,6 +21,14 @@ class Settings(BaseSettings):
     VERSION: str = "1.0.0"
     ENVIRONMENT: str = "development"
 
+    # Email/SMTP Configuration
+    SMTP_HOST: str = "smtp.gmail.com"
+    SMTP_PORT: int = 587
+    SMTP_USER: str = ""
+    SMTP_FROM_EMAIL: str = ""
+    SMTP_PASSWORD: str = ""
+    SMTP_TLS: bool = True
+
     class Config:
         env_file = ".env"
         case_sensitive = True
