@@ -27,6 +27,14 @@ def get_orders(
         query = query.filter(Order.user_id == current_user.id)
 
     orders = query.offset(skip).limit(limit).all()
+
+    # Enrich order items with product details
+    for order in orders:
+        for item in order.items:
+            if item.product:
+                item.product_name = item.product.name
+                item.product_image_url = item.product.image_url
+
     return orders
 
 

@@ -19,6 +19,8 @@ class OrderItem(OrderItemBase):
     """Schema for order item response."""
     id: int
     price_at_purchase: float
+    product_name: Optional[str] = None
+    product_image_url: Optional[str] = None
 
     class Config:
         from_attributes = True
