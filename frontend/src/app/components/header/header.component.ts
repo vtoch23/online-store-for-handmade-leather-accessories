@@ -16,6 +16,7 @@ import { UserProfile } from '../../models/auth.model';
 export class HeaderComponent implements OnInit {
   cartItemCount$!: Observable<number>;
   currentUser$!: Observable<UserProfile | null>;
+  isProfileDropdownOpen = false;
 
   constructor(
     private cartService: CartService,
@@ -32,7 +33,16 @@ export class HeaderComponent implements OnInit {
     this.currentUser$ = this.authService.currentUser$;
   }
 
+  toggleProfileDropdown(): void {
+    this.isProfileDropdownOpen = !this.isProfileDropdownOpen;
+  }
+
+  closeDropdown(): void {
+    this.isProfileDropdownOpen = false;
+  }
+
   logout(): void {
     this.authService.logout();
+    this.closeDropdown();
   }
 }

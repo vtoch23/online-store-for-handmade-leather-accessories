@@ -16,6 +16,7 @@ export class LoginComponent {
   loading = false;
   error: string | null = null;
   returnUrl: string;
+  sessionExpired = false;
 
   constructor(
     private fb: FormBuilder,
@@ -29,6 +30,7 @@ export class LoginComponent {
     }
 
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+    this.sessionExpired = this.route.snapshot.queryParams['expired'] === 'true';
 
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
