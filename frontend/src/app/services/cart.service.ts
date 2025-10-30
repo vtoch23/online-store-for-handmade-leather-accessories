@@ -13,12 +13,24 @@ export class CartService {
   private currentUserEmail: string | null = null;
 
   constructor(private authService: AuthService) {
+    // Load guest cart initially
+    this.loadCart();
+
     // Subscribe to current user changes
     this.authService.currentUser$.subscribe(user => {
       const newUserEmail = user?.email || null;
 
-      // If user changed, load their cart
-      if (newUserEmail !== this.currentUserEmail) {
+      // If user just logged in (was guest, now has email)
+      if (newUserEmail && !this.currentUserEmail) {
+        this.mergeGuestCartWithUserCart(newUserEmail);
+      }
+      // If user logged out (had email, now null)
+      else if (!newUserEmail && this.currentUserEmail) {
+        this.currentUserEmail = null;
+        this.loadCart();
+      }
+      // If user changed (different email)
+      else if (newUserEmail !== this.currentUserEmail) {
         this.currentUserEmail = newUserEmail;
         this.loadCart();
       }
@@ -97,5 +109,37 @@ export class CartService {
     // If user is logged in, use their email as part of the key
     // Otherwise use a guest cart key
     return this.currentUserEmail ? `cart_${this.currentUserEmail}` : 'cart_guest';
+  }
+
+  private mergeGuestCartWithUserCart(userEmail: string): void {
+    // Get guest cart
+    const guestCart = localStorage.getItem('cart_guest');
+    const guestItems: CartItem[] = guestCart ? JSON.parse(guestCart) : [];
+
+    // Get user's existing cart
+    const userCartKey = `cart_${userEmail}`;
+    const userCart = localStorage.getItem(userCartKey);
+    const userItems: CartItem[] = userCart ? JSON.parse(userCart) : [];
+
+    // Merge: add guest items to user cart, combining quantities for duplicates
+    const mergedCart = [...userItems];
+
+    guestItems.forEach(guestItem => {
+      const existingItem = mergedCart.find(item => item.product.id === guestItem.product.id);
+      if (existingItem) {
+        // Product already in user cart, add quantities
+        existingItem.quantity += guestItem.quantity;
+      } else {
+        // New product, add to merged cart
+        mergedCart.push(guestItem);
+      }
+    });
+
+    // Update current user email and save merged cart
+    this.currentUserEmail = userEmail;
+    this.updateCart(mergedCart);
+
+    // Clear guest cart
+    localStorage.removeItem('cart_guest');
   }
 }
