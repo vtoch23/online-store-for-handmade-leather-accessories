@@ -17,10 +17,11 @@ export class AuthService {
     private http: HttpClient,
     private router: Router
   ) {
-    // Load user from token if exists
+    // Load user from token if exists - delay to avoid circular dependency
     const token = this.getToken();
     if (token) {
-      this.loadCurrentUser();
+      // Use setTimeout to defer the HTTP call until after all services are initialized
+      setTimeout(() => this.loadCurrentUser(), 0);
     }
   }
 
@@ -67,14 +68,16 @@ export class AuthService {
       return;
     }
 
-    this.http.get<UserProfile>(`${this.apiUrl}/auth/me`, {
-      headers: this.getAuthHeaders()
-    }).subscribe({
+    this.http.get<UserProfile>(`${this.apiUrl}/auth/me`).subscribe({
       next: (user) => {
         this.currentUserSubject.next(user);
       },
-      error: () => {
-        this.logout();
+      error: (err) => {
+        console.error('Failed to load current user:', err);
+        // Only logout if it's an authentication error (401)
+        if (err.status === 401) {
+          this.logout();
+        }
       }
     });
   }
