@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { CartItem } from '../models/cart.model';
 import { Product } from '../models/product.model';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -9,13 +10,19 @@ import { Product } from '../models/product.model';
 export class CartService {
   private cartItems = new BehaviorSubject<CartItem[]>([]);
   public cartItems$ = this.cartItems.asObservable();
+  private currentUserEmail: string | null = null;
 
-  constructor() {
-    // Load cart from localStorage
-    const savedCart = localStorage.getItem('cart');
-    if (savedCart) {
-      this.cartItems.next(JSON.parse(savedCart));
-    }
+  constructor(private authService: AuthService) {
+    // Subscribe to current user changes
+    this.authService.currentUser$.subscribe(user => {
+      const newUserEmail = user?.email || null;
+
+      // If user changed, load their cart
+      if (newUserEmail !== this.currentUserEmail) {
+        this.currentUserEmail = newUserEmail;
+        this.loadCart();
+      }
+    });
   }
 
   addToCart(product: Product, quantity: number = 1): void {
@@ -72,6 +79,23 @@ export class CartService {
 
   private updateCart(cart: CartItem[]): void {
     this.cartItems.next(cart);
-    localStorage.setItem('cart', JSON.stringify(cart));
+    const cartKey = this.getCartKey();
+    localStorage.setItem(cartKey, JSON.stringify(cart));
+  }
+
+  private loadCart(): void {
+    const cartKey = this.getCartKey();
+    const savedCart = localStorage.getItem(cartKey);
+    if (savedCart) {
+      this.cartItems.next(JSON.parse(savedCart));
+    } else {
+      this.cartItems.next([]);
+    }
+  }
+
+  private getCartKey(): string {
+    // If user is logged in, use their email as part of the key
+    // Otherwise use a guest cart key
+    return this.currentUserEmail ? `cart_${this.currentUserEmail}` : 'cart_guest';
   }
 }

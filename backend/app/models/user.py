@@ -13,8 +13,14 @@ class User(Base):
     email = Column(String(255), unique=True, nullable=False, index=True)
     hashed_password = Column(String(255), nullable=False)
     full_name = Column(String(255), nullable=True)
-    is_active = Column(Boolean, default=True)
+    phone = Column(String(20), nullable=True)
+    birthday = Column(String(10), nullable=True)  # Format: YYYY-MM-DD
+    address = Column(String(500), nullable=True)
+    is_active = Column(Boolean, default=False)  # Changed to False - requires email verification
     is_admin = Column(Boolean, default=False)
+    email_verified = Column(Boolean, default=False)
+    verification_token = Column(String(255), nullable=True)
+    verification_token_expires = Column(DateTime(timezone=True), nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
